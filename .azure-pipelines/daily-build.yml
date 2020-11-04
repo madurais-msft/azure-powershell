@@ -13,12 +13,12 @@ pool:
   vmImage: 'windows-2019'
 
 steps:
-- task: PowerShell@2
-  displayName: 'Install platyPS'
-  inputs:
-    targetType: inline
-    script: 'Install-Module platyPS -Force -Confirm:$false -Scope CurrentUser'
-    pwsh: true
+# - task: PowerShell@2
+#   displayName: 'Install platyPS'
+#   inputs:
+#     targetType: inline
+#     script: 'Install-Module platyPS -Force -Confirm:$false -Scope CurrentUser'
+#     pwsh: true
 
 - task: PowerShell@2
   displayName: 'Install PowerShellGet [v2.1.3 has a Publish-Module bug]'
@@ -34,12 +34,16 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      Write-Host "get 1"
       Get-Module PowerShellGet
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+      Write-Host "get 2"
+      Get-Module PowerShellGet
       # Avoid issue of filename too long
       git config --global core.longpaths true
       # Wipe any changes from a previous branch
       git clean -xdf      
+      Write-Host "get 3"
       Get-Module PowerShellGet -ListAvailable
     pwsh: true
 
