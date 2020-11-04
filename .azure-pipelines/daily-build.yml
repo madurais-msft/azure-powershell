@@ -53,7 +53,6 @@ steps:
   inputs:
     filePath: 'tools\RunVersionController.ps1'
     arguments: '-Release "$(MonthName) $(Year)"'
-    pwsh: true
 
 # - task: EsrpCodeSigning@1
 #   inputs:
