@@ -45,6 +45,7 @@ steps:
       git clean -xdf      
       Write-Host "get 3"
       Get-Module PowerShellGet -ListAvailable
+      Get-Command Update-ModuleManifest
     pwsh: true
 
 # - task: DotNetCoreCLI@2
