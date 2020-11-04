@@ -48,6 +48,19 @@ steps:
       Get-Command Update-ModuleManifest
     pwsh: true
 
+- task: PowerShell@2
+  displayName: 'Set up Environment'
+  inputs:
+    targetType: 'inline'
+    script: |
+      Get-Command Update-ModuleManifest
+    pwsh: true
+- task: PowerShell@2
+  displayName: 'Set up Environment'
+  inputs:
+    targetType: 'inline'
+    script: |
+      Get-Command Update-ModuleManifest
 # - task: DotNetCoreCLI@2
 #   displayName: 'Build'
 #   inputs:
