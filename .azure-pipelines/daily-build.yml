@@ -54,6 +54,9 @@ steps:
     targetType: 'inline'
     script: |
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+      Get-Command Update-ModuleManifest
+      Get-Module PowerShellGet
+      Import-Module PowerShellGet
       cd tools
       ./RunVersionController.ps1 -Release "$(MonthName) $(Year)"
     pwsh: true
