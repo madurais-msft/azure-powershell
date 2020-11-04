@@ -52,10 +52,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      Set-ExecutionPolicy Unrestricted -Scope CurrentUser
+      Set-ExecutionPolicy -Scope CurrentUser Bypass
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-      Get-Module PowerShellGet
-      Get-Command Update-ModuleManifest
       cd tools
       ./RunVersionController.ps1 -Release "$(MonthName) $(Year)"
     pwsh: true
