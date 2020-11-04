@@ -26,7 +26,6 @@ steps:
     targetType: inline
     script: |
       Install-Module -Repository PSGallery -Name PowerShellGet -Scope CurrentUser -AllowClobber -Force -SkipPublisherCheck
-      Remove-Module PowerShellGet
     pwsh: true
 
 - task: PowerShell@2
@@ -53,10 +52,11 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      Remove-Module PowerShellGet
+      Import-Module PowerShellGet
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
       Get-Command Update-ModuleManifest
       Get-Module PowerShellGet
-      Import-Module PowerShellGet
       cd tools
       ./RunVersionController.ps1 -Release "$(MonthName) $(Year)"
     pwsh: true
