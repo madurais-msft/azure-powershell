@@ -14,46 +14,54 @@ pool:
 
 steps:
 - task: PowerShell@2
-  displayName: 'Install platyPS'
-  inputs:
-    targetType: inline
-    script: 'Install-Module platyPS -Force -Confirm:$false -Scope CurrentUser'
-    pwsh: true
-
-- task: PowerShell@2
-  displayName: 'Install PowerShellGet [v2.1.3 has a Publish-Module bug]'
-  inputs:
-    targetType: inline
-    script: |
-      Install-Module -Repository PSGallery -Name PowerShellGet -Scope CurrentUser -AllowClobber -Force -SkipPublisherCheck
-    pwsh: true
-
-- task: PowerShell@2
   displayName: 'Set up Environment'
   inputs:
     targetType: 'inline'
     script: |
-      # Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-      # Avoid issue of filename too long
-      git config --global core.longpaths true
-      # Wipe any changes from a previous branch
-      git clean -xdf
+      Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+      Set-ExecutionPolicy Bypass -Scope CurrentUser
+      Get-ExecutionPolicy -List
     pwsh: true
 
-- task: DotNetCoreCLI@2
-  displayName: 'Build'
-  inputs:
-    command: custom
-    custom: msbuild
-    arguments: 'build.proj /t:"Build" /p:"Configuration=Release"'
+# - task: PowerShell@2
+#   displayName: 'Install platyPS'
+#   inputs:
+#     targetType: inline
+#     script: 'Install-Module platyPS -Force -Confirm:$false -Scope CurrentUser'
+#     pwsh: true
+
+# - task: PowerShell@2
+#   displayName: 'Install PowerShellGet [v2.1.3 has a Publish-Module bug]'
+#   inputs:
+#     targetType: inline
+#     script: |
+#       Install-Module -Repository PSGallery -Name PowerShellGet -Scope CurrentUser -AllowClobber -Force -SkipPublisherCheck
+#     pwsh: true
+
+# - task: PowerShell@2
+#   displayName: 'Set up Environment'
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       # Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+#       # Avoid issue of filename too long
+#       git config --global core.longpaths true
+#       # Wipe any changes from a previous branch
+#       git clean -xdf
+#     pwsh: true
+
+# - task: DotNetCoreCLI@2
+#   displayName: 'Build'
+#   inputs:
+#     command: custom
+#     custom: msbuild
+#     arguments: 'build.proj /t:"Build" /p:"Configuration=Release"'
 
 - task: PowerShell@2
   displayName: 'Bump Version'
   inputs:
     targetType: 'inline'
     script: |
-      Set-ExecutionPolicy -Scope CurrentUser Bypass
-      Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
       cd tools
       ./RunVersionController.ps1 -Release "$(MonthName) $(Year)"
     pwsh: true
