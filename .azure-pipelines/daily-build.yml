@@ -46,20 +46,6 @@ steps:
     command: custom
     custom: msbuild
     arguments: 'build.proj /t:"Build" /p:"Configuration=Release"'
-- task: PowerShell@2
-  displayName: 'Set up Environment'
-  inputs:
-    targetType: 'inline'
-    script: |
-      Get-PSRepository
-    pwsh: true
-
-- task: PowerShell@2
-  displayName: 'Set up Environment'
-  inputs:
-    targetType: 'inline'
-    script: |
-      Get-PSRepository
 
 - task: PowerShell@2
   displayName: 'Bump Version'
