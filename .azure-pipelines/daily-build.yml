@@ -34,91 +34,93 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      Get-Module PowerShellGet
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
       # Avoid issue of filename too long
       git config --global core.longpaths true
       # Wipe any changes from a previous branch
-      git clean -xdf
+      git clean -xdf      
+      Get-Module PowerShellGet -ListAvailable
     pwsh: true
 
-- task: DotNetCoreCLI@2
-  displayName: 'Build'
-  inputs:
-    command: custom
-    custom: msbuild
-    arguments: 'build.proj /t:"Build" /p:"Configuration=Release"'
+# - task: DotNetCoreCLI@2
+#   displayName: 'Build'
+#   inputs:
+#     command: custom
+#     custom: msbuild
+#     arguments: 'build.proj /t:"Build" /p:"Configuration=Release"'
   
-- task: PowerShell@2
-  displayName: 'Bump Version'
-  inputs:
-    filePath: 'tools\RunVersionController.ps1'
-    arguments: '-Release "$(MonthName) $(Year)"'
-    pwsh: true
+# - task: PowerShell@2
+#   displayName: 'Bump Version'
+#   inputs:
+#     filePath: 'tools\RunVersionController.ps1'
+#     arguments: '-Release "$(MonthName) $(Year)"'
+#     pwsh: true
 
-- task: EsrpCodeSigning@1
-  inputs:
-    ConnectedServiceName: '$(signServiceConnection)'
-    FolderPath: 'artifacts'
-    Pattern: |
-      Release/**/Microsoft*Azure*PowerShell*Cmdlets*.dll
-      Release/**/Az.*.private.dll
-      Release/**/Microsoft.Azure.PowerShell.Authentication.dll
-      Release/**/Microsoft.Azure.PowerShell.Authentication.ResourceManager.dll
-      Release/**/Microsoft.Azure.PowerShell.Authenticators.dll
-      !Release/**/Microsoft*Azure*PowerShell*Cmdlets*.Test.dll
-    UseMinimatch: true
-    signConfigType: 'inlineSignParams'
-    inlineOperation: |
-      [
-            {
-              "KeyCode": "CP-233863-SN",
-              "OperationCode": "StrongNameSign",
-              "Parameters": {},
-              "ToolName": "sign",
-              "ToolVersion": "1.0"
-            },
-            {
-              "KeyCode": "CP-233863-SN",
-              "OperationCode": "StrongNameVerify",
-              "Parameters": {},
-              "ToolName": "sign",
-              "ToolVersion": "1.0"
-            },
-            {
-              "KeyCode": "CP-230012",
-              "OperationCode": "SigntoolSign",
-              "Parameters": {
-                "OpusName": "Microsoft",
-                "OpusInfo": "http://www.microsoft.com",
-                "FileDigest": "/fd \"SHA256\"",
-                "PageHash": "/NPH",
-                "TimeStamp": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
-              },
-              "ToolName": "sign",
-              "ToolVersion": "1.0"
-            },
-            {
-              "KeyCode": "CP-230012",
-              "OperationCode": "SigntoolVerify",
-              "Parameters": {},
-              "ToolName": "sign",
-              "ToolVersion": "1.0"
-            }
-          ]
-    SessionTimeout: '60'
-    MaxConcurrency: '50'
-    MaxRetryAttempts: '5'
+# - task: EsrpCodeSigning@1
+#   inputs:
+#     ConnectedServiceName: '$(signServiceConnection)'
+#     FolderPath: 'artifacts'
+#     Pattern: |
+#       Release/**/Microsoft*Azure*PowerShell*Cmdlets*.dll
+#       Release/**/Az.*.private.dll
+#       Release/**/Microsoft.Azure.PowerShell.Authentication.dll
+#       Release/**/Microsoft.Azure.PowerShell.Authentication.ResourceManager.dll
+#       Release/**/Microsoft.Azure.PowerShell.Authenticators.dll
+#       !Release/**/Microsoft*Azure*PowerShell*Cmdlets*.Test.dll
+#     UseMinimatch: true
+#     signConfigType: 'inlineSignParams'
+#     inlineOperation: |
+#       [
+#             {
+#               "KeyCode": "CP-233863-SN",
+#               "OperationCode": "StrongNameSign",
+#               "Parameters": {},
+#               "ToolName": "sign",
+#               "ToolVersion": "1.0"
+#             },
+#             {
+#               "KeyCode": "CP-233863-SN",
+#               "OperationCode": "StrongNameVerify",
+#               "Parameters": {},
+#               "ToolName": "sign",
+#               "ToolVersion": "1.0"
+#             },
+#             {
+#               "KeyCode": "CP-230012",
+#               "OperationCode": "SigntoolSign",
+#               "Parameters": {
+#                 "OpusName": "Microsoft",
+#                 "OpusInfo": "http://www.microsoft.com",
+#                 "FileDigest": "/fd \"SHA256\"",
+#                 "PageHash": "/NPH",
+#                 "TimeStamp": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+#               },
+#               "ToolName": "sign",
+#               "ToolVersion": "1.0"
+#             },
+#             {
+#               "KeyCode": "CP-230012",
+#               "OperationCode": "SigntoolVerify",
+#               "Parameters": {},
+#               "ToolName": "sign",
+#               "ToolVersion": "1.0"
+#             }
+#           ]
+#     SessionTimeout: '60'
+#     MaxConcurrency: '50'
+#     MaxRetryAttempts: '5'
 
-- task: DotNetCoreCLI@2
-  displayName: Publish
-  inputs:
-    command: custom
-    custom: msbuild
-    arguments: 'build.proj /t:Publish /p:Configuration=Release;NuGetKey=$(NuGetKey)'
+# - task: DotNetCoreCLI@2
+#   displayName: Publish
+#   inputs:
+#     command: custom
+#     custom: msbuild
+#     arguments: 'build.proj /t:Publish /p:Configuration=Release;NuGetKey=$(NuGetKey)'
 
-- task: PublishPipelineArtifact@0
-  displayName: 'Save artifacts'
-  inputs:
-    artifactName: artifacts
-    targetPath: artifacts
-  condition: succeededOrFailed()
+# - task: PublishPipelineArtifact@0
+#   displayName: 'Save artifacts'
+#   inputs:
+#     artifactName: artifacts
+#     targetPath: artifacts
+#   condition: succeededOrFailed()
