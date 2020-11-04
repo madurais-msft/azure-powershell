@@ -51,7 +51,7 @@ steps:
     targetType: 'inline'
     script: |
       cd tools
-      ./RunVersionController.ps1 -Release "$(MonthName) $(Year)
+      ./RunVersionController.ps1 -Release "$(MonthName) $(Year)"
     pwsh: true
 # - task: PowerShell@2
 #   displayName: 'Bump Version'
