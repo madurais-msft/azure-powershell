@@ -34,46 +34,26 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      Write-Host "get 1"
-      Get-Module PowerShellGet
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-      Write-Host "get 2"
-      Get-Module PowerShellGet
       # Avoid issue of filename too long
       git config --global core.longpaths true
       # Wipe any changes from a previous branch
       git clean -xdf      
-      Write-Host "get 3"
-      Get-Module PowerShellGet -ListAvailable
-      Get-Command Update-ModuleManifest
     pwsh: true
 
-- task: PowerShell@2
-  displayName: 'Set up Environment'
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
   inputs:
-    targetType: 'inline'
-    script: |
-      Get-Command Update-ModuleManifest
-    pwsh: true
-- task: PowerShell@2
-  displayName: 'Set up Environment'
-  inputs:
-    targetType: 'inline'
-    script: |
-      Get-Command Update-ModuleManifest
-# - task: DotNetCoreCLI@2
-#   displayName: 'Build'
-#   inputs:
-#     command: custom
-#     custom: msbuild
-#     arguments: 'build.proj /t:"Build" /p:"Configuration=Release"'
+    command: custom
+    custom: msbuild
+    arguments: 'build.proj /t:"Build" /p:"Configuration=Release"'
   
-# - task: PowerShell@2
-#   displayName: 'Bump Version'
-#   inputs:
-#     filePath: 'tools\RunVersionController.ps1'
-#     arguments: '-Release "$(MonthName) $(Year)"'
-#     pwsh: true
+- task: PowerShell@2
+  displayName: 'Bump Version'
+  inputs:
+    filePath: 'tools\RunVersionController.ps1'
+    arguments: '-Release "$(MonthName) $(Year)"'
+    pwsh: true
 
 # - task: EsrpCodeSigning@1
 #   inputs:
